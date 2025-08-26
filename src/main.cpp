@@ -91,15 +91,16 @@ int main(int, char**)
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     // Our state
-    bool draw_bunny1 = false;
+    bool draw_bunny1 = true;
     bool draw_box1 = false;
     bool rotate_bunny1 = false;
-    bool draw_bunny2 = false;
+    bool draw_bunny2 = true;
     bool draw_box2 = false;
     bool rotate_bunny2 = false;
     bool detect_collision = false;
-    bool draw_collision = false;
+    bool draw_collision = true;
     bool check_result = false;
+    bool wireframe = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     // glad: load all OpenGL function pointers
@@ -173,7 +174,7 @@ int main(int, char**)
 
         // Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
         {
-            ImGui::Begin("Oibvh collision detect"); // Create a window called "Hello, world!" and append into it.
+            ImGui::Begin("Oibvh collision detect");
 
             ImGui::Checkbox("Draw bunny1", &draw_bunny1);
             ImGui::SameLine();
@@ -185,11 +186,24 @@ int main(int, char**)
             ImGui::Checkbox("Draw box2", &draw_box2);
             ImGui::SameLine();
             ImGui::Checkbox("Rotate bunny2", &rotate_bunny2);
-            ImGui::Checkbox("Detect collision", &detect_collision);
+            if (ImGui::Checkbox("Detect collision", &detect_collision) && !detect_collision)
+            {
+                check_result = false;
+            }
             ImGui::SameLine();
             ImGui::Checkbox("Draw collision", &draw_collision);
+            if (!detect_collision)
+            {
+                ImGui::BeginDisabled();
+            }
             ImGui::Checkbox("Check result", &check_result);
+            if (!detect_collision)
+            {
+                ImGui::EndDisabled();
+            }
             ImGui::Checkbox("Free view", &free_view);
+            ImGui::SameLine();
+            ImGui::Checkbox("Wireframe", &wireframe);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
                         1000.0f / ImGui::GetIO().Framerate,
@@ -225,7 +239,7 @@ int main(int, char**)
             // render the loaded model
             glm::mat4 modelMat = glm::mat4(1.0f);
             shaderMesh.setMat4("model", modelMat);
-            bunny1.draw(shaderMesh, true);
+            bunny1.draw(shaderMesh, wireframe);
 
             shaderMesh.deactivate();
 
@@ -262,7 +276,7 @@ int main(int, char**)
             // render the loaded model
             glm::mat4 modelMat = glm::mat4(1.0f);
             shaderMesh.setMat4("model", modelMat);
-            bunny2.draw(shaderMesh, true);
+            bunny2.draw(shaderMesh, wireframe);
 
             shaderMesh.deactivate();
 

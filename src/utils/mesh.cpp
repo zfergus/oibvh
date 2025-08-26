@@ -120,8 +120,8 @@ void Mesh::setupMesh()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
     //// vertex normals
-    // glEnableVertexAttribArray(1);
-    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_normal));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_normal));
     //// vertex texture coords
     // glEnableVertexAttribArray(2);
     // glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_texCoords));
@@ -188,20 +188,20 @@ void Mesh::transform(const glm::mat4 transformMat)
 {
     m_center = glm::vec3(transformMat * glm::vec4(m_center, 1.0f));
     /*std::vector<glm::vec4> newVertices(m_vertices.size());*/
-    // std::vector<glm::vec4> newNormals(m_vertices.size());
+    std::vector<glm::vec4> newNormals(m_vertices.size());
     for (int i = 0; i < m_verticesCount; i++)
     {
         m_newVertices[i] = glm::vec4(m_vertices[i].m_position, 1.0f);
-        // newNormals[i] = glm::vec4(m_vertices[i].m_normal, 0.0f);
+        newNormals[i] = glm::vec4(m_vertices[i].m_normal, 0.0f);
     }
 
     m_transform.transformVec4(m_newVertices, transformMat);
-    // transformVec4(newNormals, transformMat);
+    m_transform.transformVec4(newNormals, transformMat);
 
     for (int i = 0; i < m_verticesCount; i++)
     {
         m_vertices[i].m_position = glm::vec3(m_newVertices[i]);
-        // m_vertices[i].m_normal = glm::vec3(newNormals[i]);
+        m_vertices[i].m_normal = glm::vec3(newNormals[i]);
     }
 
     glBindVertexArray(m_vertexArrayObj);
