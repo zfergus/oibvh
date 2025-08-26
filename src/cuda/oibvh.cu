@@ -1,5 +1,4 @@
 #include <device_launch_parameters.h>
-#include <device_functions.h>
 #include <thrust/extrema.h>
 #include "cuda/oibvh.cuh"
 

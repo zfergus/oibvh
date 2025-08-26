@@ -4,8 +4,8 @@
 // Read online: https://github.com/ocornut/imgui/tree/master/docs
 
 #include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
 #include <stdio.h>
 #include <glad/glad.h>
 #include <stb_image.h>
@@ -110,22 +110,22 @@ int main(int, char**)
         return -1;
     }
 
-    const char vertexIntTriPath[] = "..//..//..//shaders//temp_vertex_shader.glsl";
-    const char fragmentIntTriPath[] = "..//..//..//shaders//temp_fragment_shader.glsl";
-    Shader shaderIntTri(vertexIntTriPath, fragmentIntTriPath);
+    const std::string vertexIntTriPath = std::string(OIBVH_SHADER_DIR) + "/temp_vertex_shader.glsl";
+    const std::string fragmentIntTriPath = std::string(OIBVH_SHADER_DIR) + "/temp_fragment_shader.glsl";
+    Shader shaderIntTri(vertexIntTriPath.c_str(), fragmentIntTriPath.c_str());
 
-    const char vertexMeshPath[] = "..//..//..//shaders//mesh_vertex_shader.glsl";
-    const char fragmentMeshPath[] = "..//..//..//shaders//mesh_fragment_shader.glsl";
-    Shader shaderMesh(vertexMeshPath, fragmentMeshPath);
+    const std::string vertexMeshPath = std::string(OIBVH_SHADER_DIR) + "/mesh_vertex_shader.glsl";
+    const std::string fragmentMeshPath = std::string(OIBVH_SHADER_DIR) + "/mesh_fragment_shader.glsl";
+    Shader shaderMesh(vertexMeshPath.c_str(), fragmentMeshPath.c_str());
 
-    const char vertexBVHPath[] = "..//..//..//shaders//bvh_vertex_shader.glsl";
-    const char fragmentBVHPath[] = "..//..//..//shaders//bvh_fragment_shader.glsl";
-    Shader shaderBVH(vertexBVHPath, fragmentBVHPath);
+    const std::string vertexBVHPath = std::string(OIBVH_SHADER_DIR) + "/bvh_vertex_shader.glsl";
+    const std::string fragmentBVHPath = std::string(OIBVH_SHADER_DIR) + "/bvh_fragment_shader.glsl";
+    Shader shaderBVH(vertexBVHPath.c_str(), fragmentBVHPath.c_str());
 
     // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
     stbi_set_flip_vertically_on_load(true);
-    Model bunny1("..//..//..//objects//bunny.obj");
-    // Model model("..//..//..//objects//dragon.obj");
+    Model bunny1(std::string(OIBVH_OBJECT_DIR) + "/bunny.obj");
+    // Model model("../../objects/dragon.obj");
     std::shared_ptr<OibvhTree> treeBunny1 = std::make_shared<OibvhTree>(bunny1.m_meshes[0]);
     // oibvhTree tree(meshSPtr);
     treeBunny1->build();

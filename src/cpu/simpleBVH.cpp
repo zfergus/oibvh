@@ -1,5 +1,6 @@
 #include <queue>
 #include <fstream>
+#include <immintrin.h>
 
 #include "cpu/simpleBVH.h"
 
@@ -35,7 +36,11 @@ inline int next_power2(int x)
 
 inline unsigned int log2(int x)
 {
+#if defined(WIN32) || defined(_WIN32)
     return sizeof(unsigned int) * CHAR_BIT - __lzcnt(x) - 1;
+#else
+    return sizeof(unsigned int) * CHAR_BIT - __builtin_clz(x) - 1;
+#endif
 }
 
 void SimpleBVH::build()

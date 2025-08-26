@@ -1,5 +1,4 @@
 #include <device_launch_parameters.h>
-#include <device_functions.h>
 #include <gProximity/cuda_vectors.h>
 #include <gProximity/cuda_intersect_tritri.h>
 #include "cuda/collide.cuh"
