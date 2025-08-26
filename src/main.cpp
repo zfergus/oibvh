@@ -125,7 +125,7 @@ int main(int, char**)
     // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
     stbi_set_flip_vertically_on_load(true);
     Model bunny1(std::string(OIBVH_OBJECT_DIR) + "/bunny.obj");
-    // Model model("../../objects/dragon.obj");
+    // Model bunny1(std::string(OIBVH_OBJECT_DIR) + "/dragon.obj");
     std::shared_ptr<OibvhTree> treeBunny1 = std::make_shared<OibvhTree>(bunny1.m_meshes[0]);
     // oibvhTree tree(meshSPtr);
     treeBunny1->build();
@@ -225,7 +225,7 @@ int main(int, char**)
             // render the loaded model
             glm::mat4 modelMat = glm::mat4(1.0f);
             shaderMesh.setMat4("model", modelMat);
-            bunny1.draw(shaderMesh, false);
+            bunny1.draw(shaderMesh, true);
 
             shaderMesh.deactivate();
 
@@ -262,7 +262,7 @@ int main(int, char**)
             // render the loaded model
             glm::mat4 modelMat = glm::mat4(1.0f);
             shaderMesh.setMat4("model", modelMat);
-            bunny2.draw(shaderMesh, false);
+            bunny2.draw(shaderMesh, true);
 
             shaderMesh.deactivate();
 
