@@ -4,19 +4,16 @@ endif()
 
 message(STATUS "Third-party: creating target 'glfw::glfw'")
 
-include(FetchContent)
-FetchContent_Declare(
-    glfw
-    GIT_REPOSITORY https://github.com/glfw/glfw.git
-    GIT_TAG 3327050ca66ad34426a82c217c2d60ced61526b7
+include(CPM)
+CPMAddPackage(
+    URI "gh:glfw/glfw#3327050ca66ad34426a82c217c2d60ced61526b7"
+    OPTIONS
+        "GLFW_BUILD_EXAMPLES OFF"
+        "GLFW_BUILD_TESTS OFF"
+        "GLFW_BUILD_DOCS OFF"
+        "GLFW_INSTALL OFF"
+        "GLFW_VULKAN_STATIC OFF"
 )
-
-option(GLFW_BUILD_EXAMPLES "Build the GLFW example programs" OFF)
-option(GLFW_BUILD_TESTS "Build the GLFW test programs" OFF)
-option(GLFW_BUILD_DOCS "Build the GLFW documentation" OFF)
-option(GLFW_INSTALL "Generate installation target" OFF)
-option(GLFW_VULKAN_STATIC "Use the Vulkan loader statically linked into application" OFF)
-FetchContent_MakeAvailable(glfw)
 
 add_library(glfw::glfw ALIAS glfw)
 

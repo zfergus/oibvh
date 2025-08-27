@@ -4,14 +4,8 @@ endif()
 
 message(STATUS "Third-party: creating target 'imgui::imgui'")
 
-include(FetchContent)
-FetchContent_Declare(
-    imgui
-    GIT_REPOSITORY https://github.com/ocornut/imgui.git
-    GIT_TAG v1.85
-    GIT_SHALLOW TRUE
-)
-FetchContent_MakeAvailable(imgui)
+include(CPM)
+CPMAddPackage("gh:ocornut/imgui@1.85")
 
 set(IMGUI_SRC
     "${imgui_SOURCE_DIR}/imgui.h"

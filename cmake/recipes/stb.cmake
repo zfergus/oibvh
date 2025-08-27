@@ -4,13 +4,8 @@ endif()
 
 message(STATUS "Third-party: creating target 'stb::stb'")
 
-include(FetchContent)
-FetchContent_Declare(
-    stb
-    GIT_REPOSITORY https://github.com/nothings/stb.git
-    GIT_TAG f67165c2bb2af3060ecae7d20d6f731173485ad0
-)
-FetchContent_MakeAvailable(stb)
+include(CPM)
+CPMAddPackage("gh:nothings/stb#f67165c2bb2af3060ecae7d20d6f731173485ad0")
 
 # Generate implementation file
 file(WRITE "${stb_BINARY_DIR}/stb_image.cpp.in" [[
