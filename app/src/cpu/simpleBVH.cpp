@@ -1,8 +1,9 @@
 #include "simpleBVH.hpp"
 
-#include <queue>
-#include <fstream>
 #include <immintrin.h>
+
+#include <fstream>
+#include <queue>
 
 SimpleBVH::SimpleBVH(const std::shared_ptr<Mesh> mesh)
     : m_mesh(mesh), m_nodeCount(0U), m_buildDone(false), m_refitDone(true)

@@ -1,9 +1,9 @@
 #pragma once
-#include <iostream>
-#include <glm/glm.hpp>
-
 #include "simpleBVH.hpp"
+
 #include <oibvh/utils/utils.hpp>
+
+#include <glm/glm.hpp>
 
 class SimpleCollide
 {

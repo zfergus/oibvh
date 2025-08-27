@@ -1,12 +1,11 @@
 #pragma once
-#include <iostream>
-#include <vector>
-#include <memory>
+#include <oibvh/utils/mesh.hpp>
+#include <oibvh/utils/utils.hpp>
 
 #include <glm/glm.hpp>
 
-#include <oibvh/utils/mesh.hpp>
-#include <oibvh/utils/utils.hpp>
+#include <memory>
+#include <vector>
 
 typedef struct scheduling_param
 {

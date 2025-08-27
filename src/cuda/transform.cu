@@ -1,9 +1,9 @@
-#include <iostream>
+#include <oibvh/cuda/transform.cuh>
+#include <oibvh/cuda/utils.cuh>
 
 #include <device_launch_parameters.h>
 
-#include <oibvh/cuda/transform.cuh>
-#include <oibvh/cuda/utils.cuh>
+#include <iostream>
 
 Transform::Transform()
 {

@@ -1,11 +1,10 @@
 #pragma once
-#include <iostream>
-#include <memory>
+#include <oibvh/utils/mesh.hpp>
+#include <oibvh/utils/utils.hpp>
 
 #include <glm/glm.hpp>
 
-#include <oibvh/utils/mesh.hpp>
-#include <oibvh/utils/utils.hpp>
+#include <memory>
 
 typedef struct simple_bvh_node
 {

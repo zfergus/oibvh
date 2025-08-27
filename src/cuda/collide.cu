@@ -1,7 +1,8 @@
-#include <device_launch_parameters.h>
 #include <oibvh/cuda/collide.cuh>
 #include <oibvh/cuda/oibvh.cuh>
 #include <oibvh/cuda/utils.cuh>
+
+#include <device_launch_parameters.h>
 
 #define min(x, y) (x < y ? x : y)
 #define LOCALMEMSIZE 2048

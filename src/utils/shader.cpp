@@ -1,8 +1,8 @@
+#include <oibvh/utils/shader.hpp>
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
-
-#include <oibvh/utils/shader.hpp>
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath)
 {

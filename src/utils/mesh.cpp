@@ -1,8 +1,8 @@
+#include <oibvh/utils/mesh.hpp>
+
 #include <glad/glad.h> // holds all OpenGL type declarations
 
 #include <iostream>
-
-#include <oibvh/utils/mesh.hpp>
 
 Mesh::Mesh(const std::vector<Vertex>& vertices,
            const std::vector<unsigned int>& indices,

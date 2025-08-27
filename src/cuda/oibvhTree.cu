@@ -1,10 +1,11 @@
-#include <oibvh/cuda/oibvhTree.cuh>
 #include <oibvh/cuda/oibvh.cuh>
+#include <oibvh/cuda/oibvhTree.cuh>
 
 #include <cuda_runtime.h>
-#include <fstream>
-#include <thrust/sort.h>
 #include <thrust/device_ptr.h>
+#include <thrust/sort.h>
+
+#include <fstream>
 
 OibvhTree::OibvhTree(const std::shared_ptr<Mesh> mesh) : m_mesh(mesh), m_convertDone(false), m_buildDone(false)
 {

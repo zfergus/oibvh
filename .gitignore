@@ -1,6 +1,7 @@
 out/
 build/
 .vs/
+.vscode/
 logs/*
 app/objects/*
 

@@ -3,28 +3,27 @@
 // creation, etc.) If you are new to Dear ImGui, read documentation from the docs/ folder + read the top of imgui.cpp.
 // Read online: https://github.com/ocornut/imgui/tree/master/docs
 
-#include <imgui.h>
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
-#include <stdio.h>
-#include <glad/glad.h>
-#include <stb_image.h>
-#include <iostream>
-#include <utility>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#include <GLFW/glfw3.h> // Will drag system OpenGL headers
+#include "cpu/simpleBVH.hpp"
+#include "cpu/simpleCollide.hpp"
+#include "utils/camera.hpp"
+#include "utils/model.hpp"
 
 #include <oibvh/cuda/oibvhTree.cuh>
 #include <oibvh/cuda/scene.cuh>
-
-#include <oibvh/utils/shader.hpp>
 #include <oibvh/utils/mesh.hpp>
-#include "utils/model.hpp"
-#include "utils/camera.hpp"
-#include "cpu/simpleBVH.hpp"
-#include "cpu/simpleCollide.hpp"
+#include <oibvh/utils/shader.hpp>
+
+#include <GLFW/glfw3.h> // Will drag system OpenGL headers
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
+#include <glad/glad.h>
+#include <imgui.h>
+#include <stb_image.h>
+
+#include <iostream>
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
