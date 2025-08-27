@@ -2,10 +2,9 @@ if(TARGET assimp::assimp)
     return()
 endif()
 
-find_package(assimp REQUIRED)
+message(STATUS "Third-party: creating target 'assimp::assimp'")
 
-add_library(assimp INTERFACE IMPORTED)
-add_library(assimp::assimp ALIAS assimp)
+include(CPM)
+CPMAddPackage("gh:assimp/assimp@6.0.2")
 
-target_include_directories(assimp INTERFACE ${ASSIMP_INCLUDE_DIRS})
-target_link_libraries(assimp INTERFACE ${ASSIMP_LIBRARIES})
+set_target_properties(assimp PROPERTIES FOLDER ThirdParty)
