@@ -13,10 +13,10 @@
 #include <string>
 #include <vector>
 
-#include "shader.h"
-#include "utils.h"
+#include "shader.hpp"
+#include "utils.hpp"
 
-#include "cuda/transform.cuh"
+#include <oibvh/cuda/transform.cuh>
 
 #define MAX_BONE_INFLUENCE 4
 

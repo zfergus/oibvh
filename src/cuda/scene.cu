@@ -2,10 +2,10 @@
 #include <fstream>
 #include <stack>
 
-#include "cuda/scene.cuh"
-#include "cuda/utils.cuh"
-#include "cuda/collide.cuh"
-#include "cuda/oibvh.cuh"
+#include <oibvh/cuda/scene.cuh>
+#include <oibvh/cuda/utils.cuh>
+#include <oibvh/cuda/collide.cuh>
+#include <oibvh/cuda/oibvh.cuh>
 
 #define OUTPUT_TIMES 1
 

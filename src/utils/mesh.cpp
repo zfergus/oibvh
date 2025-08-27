@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "utils/mesh.h"
+#include <oibvh/utils/mesh.hpp>
 
 Mesh::Mesh(const std::vector<Vertex>& vertices,
            const std::vector<unsigned int>& indices,

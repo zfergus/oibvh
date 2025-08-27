@@ -15,9 +15,9 @@
 #include <vector>
 #include <memory>
 
-#include "mesh.h"
-#include "shader.h"
-#include "utils.h"
+#include <oibvh/utils/mesh.hpp>
+#include <oibvh/utils/shader.hpp>
+#include <oibvh/utils/utils.hpp>
 
 class Model
 {

@@ -1,8 +1,6 @@
 #pragma once
-#include "cuda/oibvhTree.cuh"
-#include "utils/mesh.h"
-#include "utils/utils.h"
-#include "cuda/scene.cuh"
+#include <oibvh/cuda/oibvhTree.cuh>
+#include <oibvh/cuda/scene.cuh>
 
 typedef struct bvtt_node
 {

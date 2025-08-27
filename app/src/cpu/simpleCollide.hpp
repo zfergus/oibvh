@@ -2,8 +2,8 @@
 #include <iostream>
 #include <glm/glm.hpp>
 
-#include "utils/utils.h"
-#include "cpu/simpleBVH.h"
+#include "simpleBVH.hpp"
+#include <oibvh/utils/utils.hpp>
 
 class SimpleCollide
 {

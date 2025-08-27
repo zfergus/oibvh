@@ -1,4 +1,5 @@
-#include "cpu/simpleCollide.h"
+#include "simpleCollide.hpp"
+
 #include <stack>
 
 #define OUTPUT_TIMES 1

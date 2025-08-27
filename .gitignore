@@ -2,7 +2,7 @@ out/
 build/
 .vs/
 logs/*
-objects/*
+app/objects/*
 
 # Prerequisites
 *.d
@@ -12,6 +12,7 @@ objects/*
 *.lo
 *.o
 *.obj
+!app/objects/*.obj
 
 # Precompiled Headers
 *.gch

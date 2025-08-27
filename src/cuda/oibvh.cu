@@ -1,6 +1,7 @@
+#include <oibvh/cuda/oibvh.cuh>
+
 #include <device_launch_parameters.h>
 #include <thrust/extrema.h>
-#include "cuda/oibvh.cuh"
 
 __device__ inline unsigned int strech_by_3(unsigned int x)
 {

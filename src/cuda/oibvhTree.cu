@@ -1,10 +1,10 @@
+#include <oibvh/cuda/oibvhTree.cuh>
+#include <oibvh/cuda/oibvh.cuh>
+
 #include <cuda_runtime.h>
 #include <fstream>
 #include <thrust/sort.h>
 #include <thrust/device_ptr.h>
-
-#include "cuda/oibvhTree.cuh"
-#include "cuda/oibvh.cuh"
 
 OibvhTree::OibvhTree(const std::shared_ptr<Mesh> mesh) : m_mesh(mesh), m_convertDone(false), m_buildDone(false)
 {
@@ -215,7 +215,7 @@ void OibvhTree::refit()
         calculate_aabb_kernel<<<gridSize, blockSize>>>(
             d_faces, d_positions, primitive_count, d_aabbs + oibvh_internal_node_count);
     });
-    std::cout << "Refit: AABBs calculation took: " << elapsed_ms << "ms" << std::endl;
+    // std::cout << "Refit: AABBs calculation took: " << elapsed_ms << "ms" << std::endl;
 
     for (int k = 0; k < m_scheduleParams.size(); k++)
     {
@@ -228,7 +228,7 @@ void OibvhTree::refit()
                                                                     m_scheduleParams[k].m_threadsPerGroup,
                                                                     d_aabbs);
         });
-        std::cout << "  oibvh refit construct kernel took: " << elapsed_ms << "ms" << std::endl;
+        // std::cout << "  oibvh refit construct kernel took: " << elapsed_ms << "ms" << std::endl;
     }
 
     hostMemcpy(m_aabbTree.data(), d_aabbs, oibvh_size);

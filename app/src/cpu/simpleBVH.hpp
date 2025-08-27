@@ -4,8 +4,8 @@
 
 #include <glm/glm.hpp>
 
-#include "utils/mesh.h"
-#include "utils/utils.h"
+#include <oibvh/utils/mesh.hpp>
+#include <oibvh/utils/utils.hpp>
 
 typedef struct simple_bvh_node
 {

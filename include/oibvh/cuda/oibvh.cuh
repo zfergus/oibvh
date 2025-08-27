@@ -1,9 +1,11 @@
 #pragma once
+
+#include <oibvh/utils/utils.hpp>
+#include <oibvh/cuda/utils.cuh>
+
 #include <cuda_runtime.h>
 #include <glm/glm.hpp>
 #include <vector>
-#include "utils/utils.h"
-#include "cuda/utils.cuh"
 
 #define THREADS_PER_BLOCK 256
 #define SUBTREESIZE_MAX (THREADS_PER_BLOCK * 2 - 1)

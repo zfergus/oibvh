@@ -1,3 +1,5 @@
+#include "model.hpp"
+
 #include <glad/glad.h>
 
 #include <glm/glm.hpp>
@@ -9,8 +11,6 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-
-#include "utils/model.h"
 
 Model::Model(const std::string& path, const bool gamma) : m_gammaCorrection(gamma)
 {

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "utils/shader.h"
+#include <oibvh/utils/shader.hpp>
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath)
 {

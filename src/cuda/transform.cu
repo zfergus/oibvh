@@ -2,8 +2,8 @@
 
 #include <device_launch_parameters.h>
 
-#include "cuda/transform.cuh"
-#include "cuda/utils.cuh"
+#include <oibvh/cuda/transform.cuh>
+#include <oibvh/cuda/utils.cuh>
 
 Transform::Transform()
 {
@@ -28,7 +28,7 @@ void Transform::transformVec4(std::vector<glm::vec4>& vec4s, const glm::mat4 tra
         dim3 gridSize = dim3(bx);
         transform_vec4_kernel<<<gridSize, blockSize>>>(d_vec4s, transformMat, vec4s.size());
     });
-    std::cout << "Transform vec4 kernel took: " << elapsed_ms << "ms" << std::endl;
+    // std::cout << "Transform vec4 kernel took: " << elapsed_ms << "ms" << std::endl;
 
     hostMemcpy(vec4s.data(), d_vec4s, vec4s.size());
 }

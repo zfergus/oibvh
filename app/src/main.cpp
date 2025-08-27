@@ -16,14 +16,15 @@
 #include <assimp/postprocess.h>
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
-#include "utils/shader.h"
-#include "utils/mesh.h"
-#include "utils/model.h"
-#include "utils/camera.h"
-#include "cuda/oibvhTree.cuh"
-#include "cuda/scene.cuh"
-#include "cpu/simpleBVH.h"
-#include "cpu/simpleCollide.h"
+#include <oibvh/cuda/oibvhTree.cuh>
+#include <oibvh/cuda/scene.cuh>
+
+#include <oibvh/utils/shader.hpp>
+#include <oibvh/utils/mesh.hpp>
+#include "utils/model.hpp"
+#include "utils/camera.hpp"
+#include "cpu/simpleBVH.hpp"
+#include "cpu/simpleCollide.hpp"
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);

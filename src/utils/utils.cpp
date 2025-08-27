@@ -1,6 +1,6 @@
 #include <glm/detail/compute_common.hpp>
 
-#include "utils/utils.h"
+#include <oibvh/utils/utils.hpp>
 
 std::ostream& operator<<(std::ostream& os, const aabb_box_t aabb)
 {
