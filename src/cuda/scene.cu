@@ -97,7 +97,7 @@ void Scene::addOibvhTree(std::shared_ptr<OibvhTree> oibvhTree)
     assert(oibvhTree->m_buildDone);
 
     const unsigned int newBvhOffset = m_aabbCount;
-    const unsigned int newPrimOffset = m_primCount;
+    // const unsigned int newPrimOffset = m_primCount;
     m_aabbOffsets.push_back(newBvhOffset);
     m_primOffsets.push_back(m_primCount);
     m_vertexOffsets.push_back(m_vertexCount);

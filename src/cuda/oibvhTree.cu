@@ -96,9 +96,9 @@ void OibvhTree::convertToVertexArray()
         glm::vec3 diff = aabb.m_minimum - backFaceLowerLeftVertex;
 
         // shift the bounding box to its real position
-        for (int i = 0; i < (int)cubeVertices.size(); ++i)
+        for (int j = 0; j < (int)cubeVertices.size(); ++j)
         {
-            glm::vec3 pos = cubeVertices[i] + diff;
+            glm::vec3 pos = cubeVertices[j] + diff;
             m_vertices.push_back(pos);
         }
 
@@ -215,6 +215,7 @@ void OibvhTree::refit()
         calculate_aabb_kernel<<<gridSize, blockSize>>>(
             d_faces, d_positions, primitive_count, d_aabbs + oibvh_internal_node_count);
     });
+    std::cout << "Refit: AABBs calculation took: " << elapsed_ms << "ms" << std::endl;
 
     for (int k = 0; k < m_scheduleParams.size(); k++)
     {
@@ -227,6 +228,7 @@ void OibvhTree::refit()
                                                                     m_scheduleParams[k].m_threadsPerGroup,
                                                                     d_aabbs);
         });
+        std::cout << "  oibvh refit construct kernel took: " << elapsed_ms << "ms" << std::endl;
     }
 
     hostMemcpy(m_aabbTree.data(), d_aabbs, oibvh_size);
@@ -333,7 +335,7 @@ void OibvhTree::build()
     }
 #endif
 
-    std::cout << "kerenl count: " << m_scheduleParams.size() << std::endl;
+    std::cout << "kernel count: " << m_scheduleParams.size() << std::endl;
 
     for (int k = 0; k < m_scheduleParams.size(); k++)
     {
