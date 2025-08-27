@@ -41,10 +41,11 @@ target_link_libraries(oibvh PRIVATE imgui::imgui)
 include(stb)
 target_link_libraries(oibvh PRIVATE stb::stb)
 
+include(glm)
+target_link_libraries(oibvh PRIVATE glm::glm)
+
 include(assimp)
 target_link_libraries(oibvh PRIVATE assimp::assimp)
-
-target_include_directories(oibvh PRIVATE ${oibvh_BASE_DIR}/third)
 
 find_package(CUDAToolkit)
 target_link_libraries(oibvh PRIVATE CUDA::cudart)
