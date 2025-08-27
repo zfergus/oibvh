@@ -1,9 +1,32 @@
-#include <oibvh/cuda/transform.cuh>
+#include "transform.hpp"
+
 #include <oibvh/cuda/utils.cuh>
 
+#include <cuda_runtime.h>
 #include <device_launch_parameters.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
+
+namespace
+{
+
+/**
+ * @brief         Transform glm::vec4 vector by transform matrix kernel
+ * @param[in]     vec4s               Vector4 to transform
+ * @param[in]     transformMat        Transform matrix
+ * @param[in]     vecCount            Vector4 count
+ * @return        void
+ */
+__global__ void transform_vec4_kernel(glm::vec4* vec4s, const glm::mat4 transformMat, const int vecCount)
+{
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx >= vecCount)
+        return;
+    vec4s[idx] = transformMat * vec4s[idx];
+}
+
+} // namespace
 
 Transform::Transform()
 {
@@ -31,12 +54,4 @@ void Transform::transformVec4(std::vector<glm::vec4>& vec4s, const glm::mat4 tra
     // std::cout << "Transform vec4 kernel took: " << elapsed_ms << "ms" << std::endl;
 
     hostMemcpy(vec4s.data(), d_vec4s, vec4s.size());
-}
-
-__global__ void transform_vec4_kernel(glm::vec4* vec4s, const glm::mat4 transformMat, const int vecCount)
-{
-    int idx = blockIdx.x * blockDim.x + threadIdx.x;
-    if (idx >= vecCount)
-        return;
-    vec4s[idx] = transformMat * vec4s[idx];
 }

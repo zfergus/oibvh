@@ -7,10 +7,10 @@
  *********************************************************************/
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include <iostream>
 #include <vector>
-
-#include <glm/glm.hpp>
 
 typedef struct aabb_box
 {
@@ -61,49 +61,23 @@ typedef struct int_tri_pair_node
 } int_tri_pair_node_t;
 
 /**
- * @brief       Overload operator for aabb_box
- * @param[in]   os       Ouput stream
- * @param[in]   aabb     aab_box to output
- * @return      Output stream
- */
-std::ostream& operator<<(std::ostream& os, const aabb_box_t aabb);
-
-/**
  * @brief 	  Overload operator<< for glm::vec3
  * @param[in] os       Output stream
  * @param[in] gvec3    glm::vec3 to output
  * @return    Output stream
  */
-std::ostream& operator<<(std::ostream& os, const glm::vec3& gvec3);
+inline std::ostream& operator<<(std::ostream& os, const glm::vec3& gvec3)
+{
+    return os << "(" << gvec3.x << ", " << gvec3.y << ", " << gvec3.z << ")";
+}
 
 /**
- * @brief      Make cube vertices array and indices for aabb bounding box
- * @param[in]  xSize              Half of x size of aabb bounding box
- * @param[in]  ySize              Half of y size of aabb bounding box
- * @param[in]  zSize              Half of z size of aabb bounding box
- * @param[in]  cubeVertices       Vertices array of cube
- * @param[in]  cubeIndices        Indices array of cube
- * @return     void
+ * @brief       Overload operator for aabb_box
+ * @param[in]   os       Ouput stream
+ * @param[in]   aabb     aab_box to output
+ * @return      Output stream
  */
-void makeCube(const float xSize,
-              const float ySize,
-              const float zSize,
-              std::vector<glm::vec3>& cubeVertices,
-              std::vector<unsigned int>& cubeIndices);
-
-/**
- * @brief     Check if two triangles intersect
- * @param[in] P1       First vertex of triangle 1
- * @param[in] P2       Second vertex of triangle 1
- * @param[in] P3       Third vertex of triangle 1
- * @param[in] Q1       First vertex of triangle 2
- * @param[in] Q2       Second vertex of triangle 2
- * @param[in] Q3       Third vertex of triangle 2
- * @return    True is intersect, otherwise false
- */
-bool triangleIntersect(const glm::vec3& P1,
-                       const glm::vec3& P2,
-                       const glm::vec3& P3,
-                       const glm::vec3& Q1,
-                       const glm::vec3& Q2,
-                       const glm::vec3& Q3);
+inline std::ostream& operator<<(std::ostream& os, const aabb_box_t aabb)
+{
+    return os << aabb.m_minimum << "X" << aabb.m_maximum;
+}

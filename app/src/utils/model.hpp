@@ -7,17 +7,18 @@
  *********************************************************************/
 #pragma once
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#include "renderMesh.hpp"
+#include "shader.hpp"
 
+#include <oibvh/utils/utils.hpp>
+
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
-
-#include <oibvh/utils/mesh.hpp>
-#include <oibvh/utils/shader.hpp>
-#include <oibvh/utils/utils.hpp>
 
 class Model
 {
@@ -70,7 +71,7 @@ private:
      * @param[in]   scene     Whole scene
      * @return      Shared pointer of mesh object processed
      */
-    std::shared_ptr<Mesh> processMesh(const aiMesh* mesh, const aiScene* scene);
+    std::shared_ptr<RenderMesh> processMesh(const aiMesh* mesh, const aiScene* scene);
 
     /**
      * @brief       Checks all material textures of a given type and loads the textures if they're not loaded yet.
@@ -106,7 +107,7 @@ public:
     /**
      * @brief  All shared pointer of meshes in model
      */
-    std::vector<std::shared_ptr<Mesh>> m_meshes;
+    std::vector<std::shared_ptr<RenderMesh>> m_meshes;
 
 private:
     /**

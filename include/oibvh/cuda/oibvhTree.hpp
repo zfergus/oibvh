@@ -59,7 +59,7 @@ public:
     /**
      * @brief      Destructor for oibvhTree class
      */
-    ~OibvhTree();
+    virtual ~OibvhTree();
 
     /**
      * @brief   Build oibvh tree through gpu
@@ -71,14 +71,7 @@ public:
      * @brief   Refit aabb bounding box of node in oibvh tree
      * @return  void
      */
-    void refit();
-
-    /**
-     * @brief         Draw mesh and bounding box(drawBox = true)
-     * @param[in]     shader        shader to use on box
-     * @return        void
-     */
-    void draw(const Shader& shader);
+    virtual void refit();
 
     /**
      * @brief        Get depth of oibvh tree
@@ -100,12 +93,6 @@ private:
     void setup();
 
     /**
-     * @brief  Convert bvh data to vertex array for rendering
-     * @return void
-     */
-    void convertToVertexArray();
-
-    /**
      * @brief       Scheduling parameters for building oibvh tree
      * @param[in]   entryLevel            Level of entry
      * @param[in]   realCount             Total number of real nodes at the corresponding entry level
@@ -116,7 +103,7 @@ private:
                               const unsigned int realCount,
                               const unsigned int threadsPerGroup);
 
-private:
+protected:
     /**
      * @brief  Mesh to build oibvh tree
      */
@@ -134,33 +121,9 @@ private:
      */
     std::vector<glm::vec3> m_positions;
     /**
-     * @brief   Have converted bvh data to vertex array for rendering or not
-     */
-    bool m_convertDone;
-    /**
      * @brief   Have build bvh done or not
      */
     bool m_buildDone;
-    /**
-     * @brief Vertex arrays object id
-     */
-    unsigned int m_vertexArrayObj;
-    /**
-     * @brief Vertex buffer object id
-     */
-    unsigned int m_vertexBufferObj;
-    /**
-     * @brief Element buffer object id
-     */
-    unsigned int m_elementBufferObj;
-    /**
-     * @brief Vertex array for bvh
-     */
-    std::vector<glm::vec3> m_vertices;
-    /**
-     * @brief Indices of vertex array for bvh
-     */
-    std::vector<unsigned int> m_indices;
     /**
      * @brief Parameters of scheduling kernel
      */
@@ -169,6 +132,4 @@ private:
     glm::vec3* m_devicePositions;
     glm::uvec3* m_deviceFaces;
     aabb_box_t* m_deviceAabbs;
-
-    friend class Scene;
 };

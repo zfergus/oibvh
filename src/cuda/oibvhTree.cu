@@ -1,5 +1,5 @@
 #include <oibvh/cuda/oibvh.cuh>
-#include <oibvh/cuda/oibvhTree.cuh>
+#include <oibvh/cuda/oibvhTree.hpp>
 
 #include <cuda_runtime.h>
 #include <thrust/device_ptr.h>
@@ -7,7 +7,7 @@
 
 #include <fstream>
 
-OibvhTree::OibvhTree(const std::shared_ptr<Mesh> mesh) : m_mesh(mesh), m_convertDone(false), m_buildDone(false)
+OibvhTree::OibvhTree(const std::shared_ptr<Mesh> mesh) : m_mesh(mesh), m_buildDone(false)
 {
     deviceMalloc(&m_devicePositions, 10000000);
     deviceMalloc(&m_deviceFaces, 10000000);
@@ -17,13 +17,10 @@ OibvhTree::OibvhTree(const std::shared_ptr<Mesh> mesh) : m_mesh(mesh), m_convert
 
 OibvhTree::OibvhTree(const std::shared_ptr<OibvhTree> other, const std::shared_ptr<Mesh> mesh)
     : m_mesh(mesh)
-    , m_convertDone(other->m_convertDone)
     , m_buildDone(other->m_buildDone)
     , m_aabbTree(other->m_aabbTree)
     , m_faces(other->m_faces)
     , m_positions(other->m_positions)
-    , m_vertices(other->m_vertices)
-    , m_indices(other->m_indices)
     , m_scheduleParams(other->m_scheduleParams)
 {
     deviceMalloc(&m_devicePositions, 10000000);
@@ -38,10 +35,6 @@ OibvhTree::~OibvhTree()
     cudaFree(m_devicePositions);
     cudaFree(m_deviceFaces);
     cudaFree(m_deviceAabbs);
-
-    glDeleteVertexArrays(1, &m_vertexArrayObj);
-    glDeleteBuffers(1, &m_vertexBufferObj);
-    glDeleteBuffers(1, &m_elementBufferObj);
 }
 
 unsigned int OibvhTree::getDepth() const
@@ -52,76 +45,6 @@ unsigned int OibvhTree::getDepth() const
 unsigned int OibvhTree::getPrimCount() const
 {
     return m_faces.size();
-}
-
-void OibvhTree::draw(const Shader& shader)
-{
-
-    if (!m_convertDone)
-    {
-        convertToVertexArray();
-    }
-
-    glBindVertexArray(m_vertexArrayObj);
-    glDrawElements(GL_LINES, static_cast<unsigned int>(m_indices.size()), GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0U);
-}
-
-void OibvhTree::convertToVertexArray()
-{
-    assert(m_buildDone);
-
-    const int primitiveCount = m_faces.size();
-    const int numNodesInTree = m_aabbTree.size();
-    const int internalNodes = numNodesInTree - primitiveCount;
-    const int renderNodes = std::min(internalNodes, 256);
-    m_vertices.clear();
-    m_indices.clear();
-
-    for (int i = 0; i < renderNodes; i++)
-    {
-        aabb_box_t aabb = m_aabbTree[i];
-
-        // make cube
-        std::vector<glm::vec3> cubeVertices;
-        std::vector<unsigned int> cubeIndices;
-
-        makeCube(0.5f * (aabb.m_maximum.x - aabb.m_minimum.x),
-                 0.5f * (aabb.m_maximum.y - aabb.m_minimum.y),
-                 0.5 * (aabb.m_maximum.z - aabb.m_minimum.z),
-                 cubeVertices,
-                 cubeIndices);
-
-        int backFaceLowerLeftVertexIndex = 4;
-        glm::vec3 backFaceLowerLeftVertex = cubeVertices[backFaceLowerLeftVertexIndex];
-        glm::vec3 diff = aabb.m_minimum - backFaceLowerLeftVertex;
-
-        // shift the bounding box to its real position
-        for (int j = 0; j < (int)cubeVertices.size(); ++j)
-        {
-            glm::vec3 pos = cubeVertices[j] + diff;
-            m_vertices.push_back(pos);
-        }
-
-        // offset indices
-        for (int j = 0; j < (int)cubeIndices.size(); ++j)
-        {
-            cubeIndices[j] += cubeVertices.size() * i;
-        }
-
-        m_indices.insert(m_indices.end(), cubeIndices.begin(), cubeIndices.end());
-    }
-
-    glBindVertexArray(m_vertexArrayObj);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObj);
-    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(glm::vec3), m_vertices.data(), GL_STREAM_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_elementBufferObj);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(unsigned int), m_indices.data(), GL_STREAM_DRAW);
-    glBindVertexArray(0);
-
-    // convert done
-    m_convertDone = true;
 }
 
 void OibvhTree::schedulingParameters(const unsigned int entryLevel,
@@ -173,22 +96,6 @@ void OibvhTree::setup()
         std::cout << "vertices count: " << m_positions.size() << std::endl;
         std::cout << std::endl;
     }
-
-    glGenVertexArrays(1U, &m_vertexArrayObj);
-    glGenBuffers(1U, &m_vertexBufferObj);
-    glGenBuffers(1U, &m_elementBufferObj);
-
-    glBindVertexArray(m_vertexArrayObj);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObj);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * m_vertices.size(), m_vertices.data(), GL_STREAM_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_elementBufferObj);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_indices.size(), m_indices.data(), GL_STREAM_DRAW);
-
-    glEnableVertexAttribArray(0U);
-    glVertexAttribPointer(0U, 3U, GL_FLOAT, GL_FALSE, 0, (void*)0); // position
-
-    glBindVertexArray(0U);
 }
 
 void OibvhTree::refit()
@@ -233,8 +140,6 @@ void OibvhTree::refit()
     }
 
     hostMemcpy(m_aabbTree.data(), d_aabbs, oibvh_size);
-
-    m_convertDone = false;
 }
 
 void OibvhTree::build()

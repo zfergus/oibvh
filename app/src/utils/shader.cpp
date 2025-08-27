@@ -1,4 +1,4 @@
-#include <oibvh/utils/shader.hpp>
+#include "shader.hpp"
 
 #include <fstream>
 #include <iostream>

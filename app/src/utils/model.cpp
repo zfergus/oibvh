@@ -1,7 +1,6 @@
 #include "model.hpp"
 
 #include <glad/glad.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -9,8 +8,8 @@
 #include <stb_image.h>
 
 #include <fstream>
-#include <sstream>
 #include <iostream>
+#include <sstream>
 
 Model::Model(const std::string& path, const bool gamma) : m_gammaCorrection(gamma)
 {
@@ -27,7 +26,7 @@ Model::Model(const Model& other)
 {
     for (unsigned int i = 0; i < other.m_meshes.size(); i++)
     {
-        m_meshes.push_back(std::make_shared<Mesh>(*other.m_meshes[i]));
+        m_meshes.push_back(std::make_shared<RenderMesh>(*other.m_meshes[i]));
     }
 }
 
@@ -98,7 +97,7 @@ void Model::processNode(const aiNode* node, const aiScene* scene)
     }
 }
 
-std::shared_ptr<Mesh> Model::processMesh(const aiMesh* mesh, const aiScene* scene)
+std::shared_ptr<RenderMesh> Model::processMesh(const aiMesh* mesh, const aiScene* scene)
 {
     // data to fill
     std::vector<Vertex> vertices;
@@ -182,7 +181,7 @@ std::shared_ptr<Mesh> Model::processMesh(const aiMesh* mesh, const aiScene* scen
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
     // return a mesh object created from the extracted mesh data
-    return std::make_shared<Mesh>(vertices, indices, textures);
+    return std::make_shared<RenderMesh>(vertices, indices, textures);
 }
 
 std::vector<Texture>

@@ -3,7 +3,12 @@ add_executable(oibvh_demo
     src/cpu/simpleBVH.cpp
     src/cpu/simpleCollide.cpp
     src/utils/camera.cpp
+    src/utils/drawableOibvhTree.cu
+    src/utils/renderMesh.cpp
     src/utils/model.cpp
+    src/utils/scene.cu
+    src/utils/transform.cu
+    src/utils/shader.cpp
 )
 
 target_include_directories(oibvh_demo PUBLIC ${oibvh_INCLUDE_DIR})

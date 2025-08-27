@@ -20,11 +20,6 @@ add_library(oibvh
     ${OIBVH_SRC_DIR}/cuda/collide.cu
     ${OIBVH_SRC_DIR}/cuda/oibvh.cu
     ${OIBVH_SRC_DIR}/cuda/oibvhTree.cu
-    ${OIBVH_SRC_DIR}/cuda/scene.cu
-    ${OIBVH_SRC_DIR}/cuda/transform.cu
-    ${OIBVH_SRC_DIR}/utils/mesh.cpp
-    ${OIBVH_SRC_DIR}/utils/shader.cpp
-    ${OIBVH_SRC_DIR}/utils/utils.cpp
 )
 
 target_include_directories(oibvh PUBLIC ${OIBVH_INCLUDE_DIR})
@@ -32,10 +27,7 @@ target_include_directories(oibvh PUBLIC ${OIBVH_INCLUDE_DIR})
 # ------------------------------- Dependencies -------------------------------
 
 include(glm)
-target_link_libraries(oibvh PRIVATE glm::glm)
-
-include(glad)
-target_link_libraries(oibvh PRIVATE glad::glad)
+target_link_libraries(oibvh PUBLIC glm::glm)
 
 find_package(CUDAToolkit)
 target_link_libraries(oibvh PRIVATE CUDA::cudart)

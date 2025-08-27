@@ -7,15 +7,10 @@
  *********************************************************************/
 #pragma once
 
-#include "shader.hpp"
 #include "utils.hpp"
 
-#include <oibvh/cuda/transform.cuh>
-
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
-#include <string>
 #include <vector>
 
 #define MAX_BONE_INFLUENCE 4
@@ -52,119 +47,35 @@ struct Vertex
     float m_weights[MAX_BONE_INFLUENCE];
 };
 
-struct Texture
-{
-    /**
-     * @brief Id of texture
-     */
-    unsigned int m_id;
-    /**
-     * @brief Type of texture
-     */
-    std::string m_type;
-    /**
-     * @brief File path of texture
-     */
-    std::string m_path;
-};
-
 class Mesh
 {
 public:
-    Mesh() = delete;
+    // Mesh() = delete;
 
     /**
      * @brief       Constructor for Mesh class
      * @param[in]   vertices    Vertices data of mesh for vertex array buffer
      * @param[in]   indices     Indices of vertex data in mesh for element array buffer
-     * @param[in]   textures    Textures data of mesh
      */
-    Mesh(const std::vector<Vertex>& vertices,
-         const std::vector<unsigned int>& indices,
-         const std::vector<Texture>& textures = std::vector<Texture>());
+    Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices)
+        : m_vertices(vertices), m_indices(indices), m_verticesCount(vertices.size()), m_facesCount(indices.size() / 3)
+    {
+        setupAABB();
+    }
 
     /**
      * @brief        Copy constructor for Mesh class
      * @param[in]    other            Other mesh to copy
      */
-    Mesh(const Mesh& other);
+    Mesh(const Mesh& other)
+        : m_vertices(other.m_vertices)
+        , m_indices(other.m_indices)
+        , m_verticesCount(other.m_verticesCount)
+        , m_facesCount(other.m_facesCount)
+        , m_aabb(other.m_aabb)
+    {
+    }
 
-    /**
-     * @brief      Deconstructor for Mesh class
-     */
-    ~Mesh();
-
-    /**
-     * @brief       Render the mesh with specific shader
-     * @param[in]   shader               Shader to use
-     * @param[in]   haveWireframe        Have wire frame or not
-     * @return      void
-     */
-    void draw(const Shader& shader, const bool haveWireframe = false) const;
-
-    /**
-     * @brief       Rotate mesh around local axis with angle degree
-     * @param[in]   axis        Rotation axis
-     * @param[in]   angle       Rotation angle(degree)
-     * @return      void
-     */
-    void rotate(const glm::vec3 axis, const float angle);
-
-    /**
-     * @brief       Rotate mesh around local x axis with angle degree
-     * @param[in]   angle       Rotation angle(degree)
-     * @return      void
-     */
-    void rotateX(const float angle = 1.0f);
-
-    /**
-     * @brief       Rotate mesh around local y axis with angle degree
-     * @param[in]   angle       Rotation angle(degree)
-     * @return      void
-     */
-    void rotateY(const float angle = 1.0f);
-
-    /**
-     * @brief       Rotate mesh around local z axis with angle degree
-     * @param[in]   angle       Rotation angle(degree)
-     * @return      void
-     */
-    void rotateZ(const float angle = 1.0f);
-
-    /**
-     * @brief       Translate mesh along with direction
-     * @param[in]   translation    Translation vec3
-     * @return      void
-     */
-    void translate(const glm::vec3 translation);
-
-    /**
-     * @brief        Transform mesh with tranform matrix
-     * @param[in]    transformMat        Transform matrix
-     * @return       void
-     */
-    void transform(const glm::mat4 transformMat);
-
-private:
-    /**
-     * @brief       Set aabb bounding box of mesh
-     * @return      void
-     */
-    void setupAABB();
-
-    /**
-     * @brief     Initializes all the buffer objects / arrays
-     * @return    void
-     */
-    void setupMesh();
-
-    /**
-     * @brief       Calculate center of mesh
-     * @return      void
-     */
-    void setupCenter();
-
-public:
     /**
      * @brief Count of vertices in mesh
      */
@@ -186,29 +97,17 @@ public:
      */
     aabb_box_t m_aabb;
 
-private:
+protected:
     /**
-     * @brief Textures data of mesh
+     * @brief       Set aabb bounding box of mesh
+     * @return      void
      */
-    std::vector<Texture> m_textures;
-    /**
-     * @brief Vertex arrays object id
-     */
-    unsigned int m_vertexArrayObj;
-    /**
-     * @brief Vertex buffer object id
-     */
-    unsigned int m_vertexBufferObj;
-    /**
-     * @brief Element buffer object id
-     */
-    unsigned int m_elementBufferObj;
-    /**
-     * @brief Center of mesh
-     */
-    glm::vec3 m_center;
-
-    Transform m_transform;
-
-    std::vector<glm::vec4> m_newVertices;
+    void setupAABB()
+    {
+        for (const auto& vertex : m_vertices)
+        {
+            m_aabb.m_maximum = glm::max(vertex.m_position, m_aabb.m_maximum);
+            m_aabb.m_minimum = glm::min(vertex.m_position, m_aabb.m_minimum);
+        }
+    }
 };

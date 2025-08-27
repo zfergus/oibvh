@@ -6,12 +6,13 @@
 #include "cpu/simpleBVH.hpp"
 #include "cpu/simpleCollide.hpp"
 #include "utils/camera.hpp"
+#include "utils/drawableOibvhTree.hpp"
 #include "utils/model.hpp"
+#include "utils/scene.hpp"
+#include "utils/shader.hpp"
 
-#include <oibvh/cuda/oibvhTree.cuh>
-#include <oibvh/cuda/scene.cuh>
+#include <oibvh/cuda/oibvhTree.hpp>
 #include <oibvh/utils/mesh.hpp>
-#include <oibvh/utils/shader.hpp>
 
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 #include <assimp/Importer.hpp>
@@ -127,11 +128,11 @@ int main(int, char**)
     stbi_set_flip_vertically_on_load(true);
     Model bunny1(std::string(OIBVH_OBJECT_DIR) + "/bunny.obj");
     // Model bunny1(std::string(OIBVH_OBJECT_DIR) + "/dragon.obj");
-    std::shared_ptr<OibvhTree> treeBunny1 = std::make_shared<OibvhTree>(bunny1.m_meshes[0]);
+    std::shared_ptr<DrawableOibvhTree> treeBunny1 = std::make_shared<DrawableOibvhTree>(bunny1.m_meshes[0]);
     // oibvhTree tree(meshSPtr);
     treeBunny1->build();
     Model bunny2(bunny1);
-    std::shared_ptr<OibvhTree> treeBunny2 = std::make_shared<OibvhTree>(treeBunny1, bunny2.m_meshes[0]);
+    std::shared_ptr<DrawableOibvhTree> treeBunny2 = std::make_shared<DrawableOibvhTree>(treeBunny1, bunny2.m_meshes[0]);
     bunny2.m_meshes[0]->translate(glm::vec3(1.0f, 0.0f, 0.0f));
     treeBunny2->refit();
     Scene scene;

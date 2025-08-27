@@ -1,48 +1,35 @@
-#include <oibvh/utils/mesh.hpp>
+#include "renderMesh.hpp"
 
 #include <glad/glad.h> // holds all OpenGL type declarations
 
 #include <iostream>
 
-Mesh::Mesh(const std::vector<Vertex>& vertices,
-           const std::vector<unsigned int>& indices,
-           const std::vector<Texture>& textures)
-    : m_vertices(vertices)
-    , m_indices(indices)
-    , m_textures(textures)
-    , m_verticesCount(vertices.size())
-    , m_facesCount(indices.size() / 3)
+RenderMesh::RenderMesh(const std::vector<Vertex>& vertices,
+                       const std::vector<unsigned int>& indices,
+                       const std::vector<Texture>& textures)
+    : Mesh(vertices, indices), m_textures(textures)
 {
     m_newVertices.resize(m_verticesCount);
-    // calculate bounding box of mesh
-    setupAABB();
     // now that we have all the required data, set the vertex buffers and its attribute pointers.
     setupMesh();
     // calculate center of mesh
     setupCenter();
 }
 
-Mesh::Mesh(const Mesh& other)
-    : m_vertices(other.m_vertices)
-    , m_indices(other.m_indices)
-    , m_textures(other.m_textures)
-    , m_verticesCount(other.m_verticesCount)
-    , m_facesCount(other.m_facesCount)
-    , m_aabb(other.m_aabb)
-    , m_center(other.m_center)
+RenderMesh::RenderMesh(const RenderMesh& other) : Mesh(other), m_textures(other.m_textures), m_center(other.m_center)
 {
     m_newVertices.resize(m_verticesCount);
     setupMesh();
 }
 
-Mesh::~Mesh()
+RenderMesh::~RenderMesh()
 {
     glDeleteVertexArrays(1, &m_vertexArrayObj);
     glDeleteBuffers(1, &m_vertexBufferObj);
     glDeleteBuffers(1, &m_elementBufferObj);
 }
 
-void Mesh::draw(const Shader& shader, const bool haveWireframe) const
+void RenderMesh::draw(const Shader& shader, const bool haveWireframe) const
 {
     // bind appropriate textures
     unsigned int diffuseNr = 1;
@@ -88,16 +75,7 @@ void Mesh::draw(const Shader& shader, const bool haveWireframe) const
     glActiveTexture(GL_TEXTURE0);
 }
 
-void Mesh::setupAABB()
-{
-    for (const auto& vertex : m_vertices)
-    {
-        m_aabb.m_maximum = glm::max(vertex.m_position, m_aabb.m_maximum);
-        m_aabb.m_minimum = glm::min(vertex.m_position, m_aabb.m_minimum);
-    }
-}
-
-void Mesh::setupMesh()
+void RenderMesh::setupMesh()
 {
     // create buffers/arrays
     glGenVertexArrays(1, &m_vertexArrayObj);
@@ -142,7 +120,7 @@ void Mesh::setupMesh()
     glBindVertexArray(0);
 }
 
-void Mesh::setupCenter()
+void RenderMesh::setupCenter()
 {
     m_center = glm::vec3(0.0f);
     for (const auto& vertex : m_vertices)
@@ -152,22 +130,22 @@ void Mesh::setupCenter()
     m_center /= (float)m_verticesCount;
 }
 
-void Mesh::rotateX(const float angle)
+void RenderMesh::rotateX(const float angle)
 {
     rotate(glm::vec3(1.0f, 0.0f, 0.0f), angle);
 }
 
-void Mesh::rotateY(const float angle)
+void RenderMesh::rotateY(const float angle)
 {
     rotate(glm::vec3(0.0f, 1.0f, 0.0f), angle);
 }
 
-void Mesh::rotateZ(const float angle)
+void RenderMesh::rotateZ(const float angle)
 {
     rotate(glm::vec3(0.0f, 0.0f, 1.0f), angle);
 }
 
-void Mesh::rotate(const glm::vec3 axis, const float angle)
+void RenderMesh::rotate(const glm::vec3 axis, const float angle)
 {
     glm::mat4 transformMat = glm::identity<glm::mat4>();
     transformMat = glm::translate(transformMat, m_center);
@@ -177,14 +155,14 @@ void Mesh::rotate(const glm::vec3 axis, const float angle)
     transform(transformMat);
 }
 
-void Mesh::translate(const glm::vec3 translation)
+void RenderMesh::translate(const glm::vec3 translation)
 {
     glm::mat4 transformMat = glm::identity<glm::mat4>();
     transformMat = glm::translate(transformMat, translation);
     transform(transformMat);
 }
 
-void Mesh::transform(const glm::mat4 transformMat)
+void RenderMesh::transform(const glm::mat4 transformMat)
 {
     m_center = glm::vec3(transformMat * glm::vec4(m_center, 1.0f));
     /*std::vector<glm::vec4> newVertices(m_vertices.size());*/

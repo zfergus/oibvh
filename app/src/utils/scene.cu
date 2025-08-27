@@ -1,7 +1,10 @@
+#include "scene.hpp"
+
 #include <oibvh/cuda/collide.cuh>
 #include <oibvh/cuda/oibvh.cuh>
-#include <oibvh/cuda/scene.cuh>
 #include <oibvh/cuda/utils.cuh>
+
+#include <glad/glad.h> // holds all OpenGL type declarations
 
 #include <fstream>
 #include <iostream>
@@ -92,7 +95,7 @@ void Scene::convertToVertexArray()
     m_convertDone = true;
 }
 
-void Scene::addOibvhTree(std::shared_ptr<OibvhTree> oibvhTree)
+void Scene::addOibvhTree(std::shared_ptr<DrawableOibvhTree> oibvhTree)
 {
     assert(oibvhTree->m_buildDone);
 

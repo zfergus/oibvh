@@ -1,11 +1,8 @@
 #pragma once
-#include <oibvh/cuda/oibvhTree.cuh>
-#include <oibvh/cuda/scene.cuh>
 
-typedef struct bvtt_node
-{
-    unsigned int m_aabbIndex[2];
-} bvtt_node_t;
+#include "drawableOibvhTree.hpp"
+
+#include <oibvh/cuda/collide.cuh>
 
 enum class DeviceType
 {
@@ -39,7 +36,7 @@ public:
      * @param[in]     oibvhTree      Oibvh tree to add
      * @return        void
      */
-    void addOibvhTree(std::shared_ptr<OibvhTree> oibvhTree);
+    void addOibvhTree(std::shared_ptr<DrawableOibvhTree> oibvhTree);
 
     /**
      * @brief         Detect collision between objects
@@ -104,7 +101,7 @@ private:
     /**
      * @brief  Vector of  oibvh trees
      */
-    std::vector<std::shared_ptr<OibvhTree>> m_oibvhTrees;
+    std::vector<std::shared_ptr<DrawableOibvhTree>> m_oibvhTrees;
     /**
      * @brief  Layout aabb offsets array
      */

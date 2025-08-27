@@ -276,14 +276,12 @@ __device__ bool project6(const glm::vec3& ax,
     return (mn1 <= mx2) && (mn2 <= mx1);
 }
 
-} // namespace
-
-__device__ bool triangles_intersect(const glm::vec3& P1,
-                                    const glm::vec3& P2,
-                                    const glm::vec3& P3,
-                                    const glm::vec3& Q1,
-                                    const glm::vec3& Q2,
-                                    const glm::vec3& Q3)
+__device__ bool triangleIntersect(const glm::vec3& P1,
+                                  const glm::vec3& P2,
+                                  const glm::vec3& P3,
+                                  const glm::vec3& Q1,
+                                  const glm::vec3& Q2,
+                                  const glm::vec3& Q3)
 {
     // One triangle is (p1,p2,p3).  Other is (q1,q2,q3).
     // Edges are (e1,e2,e3) and (f1,f2,f3).
@@ -355,6 +353,8 @@ __device__ bool triangles_intersect(const glm::vec3& P1,
         project6(h3, p1, p2, p3, q1, q2, q3);
 }
 
+} // namespace
+
 __global__ void triangle_intersect_kernel(tri_pair_node_t* triPairs,
                                           glm::uvec3* primitives,
                                           glm::vec3* vertices,
@@ -397,7 +397,7 @@ __global__ void triangle_intersect_kernel(tri_pair_node_t* triPairs,
     }
 
     // triangle intersect
-    if (triangles_intersect(
+    if (triangleIntersect(
             triVerticesA[0], triVerticesA[1], triVerticesA[2], triVerticesB[0], triVerticesB[1], triVerticesB[2]))
     {
         unsigned int intTriPairOffset = atomicAdd(intTriPairCount, 1u);

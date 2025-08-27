@@ -1,8 +1,13 @@
 #pragma once
 
-#include <oibvh/cuda/scene.cuh>
+#include <oibvh/cuda/oibvhTree.hpp>
 
 #include <cuda_runtime.h>
+
+typedef struct bvtt_node
+{
+    unsigned int m_aabbIndex[2];
+} bvtt_node_t;
 
 __global__ void traversal_kernel(bvtt_node_t* src,
                                  bvtt_node_t* dst,
