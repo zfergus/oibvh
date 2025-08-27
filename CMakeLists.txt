@@ -46,4 +46,6 @@ target_link_libraries(oibvh PRIVATE assimp::assimp)
 
 target_include_directories(oibvh PRIVATE ${oibvh_BASE_DIR}/third)
 
+find_package(CUDAToolkit)
+target_link_libraries(oibvh PRIVATE CUDA::cudart)
 set_target_properties(oibvh PROPERTIES CUDA_ARCHITECTURES "native")

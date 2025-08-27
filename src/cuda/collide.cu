@@ -1,6 +1,4 @@
 #include <device_launch_parameters.h>
-#include <gProximity/cuda_vectors.h>
-#include <gProximity/cuda_intersect_tritri.h>
 #include "cuda/collide.cuh"
 #include "cuda/oibvh.cuh"
 #include "cuda/utils.cuh"
@@ -244,6 +242,118 @@ __global__ void traversal_kernel(bvtt_node_t* src,
     } while (times * LOCALMEMSIZE < limitNumData);
 }
 
+namespace
+{
+
+// Projects the vertices of two triangles onto the given axis and checks for overlap.
+// Returns true if the projections overlap (i.e., no separating axis found).
+__device__ bool project6(const glm::vec3& ax,
+                         const glm::vec3& p1,
+                         const glm::vec3& p2,
+                         const glm::vec3& p3,
+                         const glm::vec3& q1,
+                         const glm::vec3& q2,
+                         const glm::vec3& q3)
+{
+    // Project triangle A vertices onto axis
+    float P1 = dot(ax, p1);
+    float P2 = dot(ax, p2);
+    float P3 = dot(ax, p3);
+
+    // Project triangle B vertices onto axis
+    float Q1 = dot(ax, q1);
+    float Q2 = dot(ax, q2);
+    float Q3 = dot(ax, q3);
+
+    // Find min/max projections for both triangles
+    float mx1 = fmax(fmax(P1, P2), P3);
+    float mn1 = fmin(fmin(P1, P2), P3);
+    float mx2 = fmax(fmax(Q1, Q2), Q3);
+    float mn2 = fmin(fmin(Q1, Q2), Q3);
+
+    // Check for overlap in projections
+    return (mn1 <= mx2) && (mn2 <= mx1);
+}
+
+} // namespace
+
+__device__ bool triangles_intersect(const glm::vec3& P1,
+                                    const glm::vec3& P2,
+                                    const glm::vec3& P3,
+                                    const glm::vec3& Q1,
+                                    const glm::vec3& Q2,
+                                    const glm::vec3& Q3)
+{
+    // One triangle is (p1,p2,p3).  Other is (q1,q2,q3).
+    // Edges are (e1,e2,e3) and (f1,f2,f3).
+    // Normals are n1 and m1
+    // Outwards are (g1,g2,g3) and (h1,h2,h3).
+    //
+    // We assume that the triangle vertices are in the same coordinate system.
+    //
+    // First thing we do is establish a new c.s. so that p1 is at (0,0,0).
+
+    glm::vec3 p1, p2, p3;
+    glm::vec3 q1, q2, q3;
+    glm::vec3 e1, e2, e3;
+    glm::vec3 f1, f2, f3;
+    glm::vec3 g1, g2, g3;
+    glm::vec3 h1, h2, h3;
+    glm::vec3 n1, m1;
+
+    glm::vec3 ef11, ef12, ef13;
+    glm::vec3 ef21, ef22, ef23;
+    glm::vec3 ef31, ef32, ef33;
+
+    p1 = glm::vec3(0, 0, 0);
+    p2 = P2 - P1;
+    p3 = P3 - P1;
+
+    q1 = Q1 - P1;
+    q2 = Q2 - P1;
+    q3 = Q3 - P1;
+
+    e1 = p2 - p1;
+    e2 = p3 - p2;
+    e3 = p1 - p3;
+
+    f1 = q2 - q1;
+    f2 = q3 - q2;
+    f3 = q1 - q3;
+
+    n1 = cross(e1, e2);
+    m1 = cross(f1, f2);
+
+    g1 = cross(e1, n1);
+    g2 = cross(e2, n1);
+    g3 = cross(e3, n1);
+    h1 = cross(f1, m1);
+    h2 = cross(f2, m1);
+    h3 = cross(f3, m1);
+
+    ef11 = cross(e1, f1);
+    ef12 = cross(e1, f2);
+    ef13 = cross(e1, f3);
+    ef21 = cross(e2, f1);
+    ef22 = cross(e2, f2);
+    ef23 = cross(e2, f3);
+    ef31 = cross(e3, f1);
+    ef32 = cross(e3, f2);
+    ef33 = cross(e3, f3);
+
+    // now begin the series of tests
+
+    return project6(n1, p1, p2, p3, q1, q2, q3) && project6(m1, p1, p2, p3, q1, q2, q3) &&
+        project6(ef11, p1, p2, p3, q1, q2, q3) && project6(ef12, p1, p2, p3, q1, q2, q3) &&
+        project6(ef13, p1, p2, p3, q1, q2, q3) && project6(ef21, p1, p2, p3, q1, q2, q3) &&
+        project6(ef22, p1, p2, p3, q1, q2, q3) && project6(ef23, p1, p2, p3, q1, q2, q3) &&
+        project6(ef31, p1, p2, p3, q1, q2, q3) && project6(ef32, p1, p2, p3, q1, q2, q3) &&
+        project6(ef33, p1, p2, p3, q1, q2, q3) && project6(g1, p1, p2, p3, q1, q2, q3) &&
+        project6(g2, p1, p2, p3, q1, q2, q3) && project6(g3, p1, p2, p3, q1, q2, q3) &&
+        project6(h1, p1, p2, p3, q1, q2, q3) && project6(h2, p1, p2, p3, q1, q2, q3) &&
+        project6(h3, p1, p2, p3, q1, q2, q3);
+}
+
 __global__ void triangle_intersect_kernel(tri_pair_node_t* triPairs,
                                           glm::uvec3* primitives,
                                           glm::vec3* vertices,
@@ -277,19 +387,16 @@ __global__ void triangle_intersect_kernel(tri_pair_node_t* triPairs,
         sharedPrimOffsets, sharedVertexOffsets, triIndexB, layoutLength, bvhIndexB, primOffsetB, vertexOffsetB);
     glm::uvec3 triangleA = primitives[triIndexA];
     glm::uvec3 triangleB = primitives[triIndexB];
-    float3 triVerticesA[3];
-    float3 triVerticesB[3];
 
+    glm::vec3 triVerticesA[3], triVerticesB[3];
     for (int i = 0; i < 3; i++)
     {
-        glm::vec3 tempVertex = vertices[vertexOffsetA + triangleA[i]];
-        triVerticesA[i] = make_float3(tempVertex.x, tempVertex.y, tempVertex.z);
-        tempVertex = vertices[vertexOffsetB + triangleB[i]];
-        triVerticesB[i] = make_float3(tempVertex.x, tempVertex.y, tempVertex.z);
+        triVerticesA[i] = vertices[vertexOffsetA + triangleA[i]];
+        triVerticesB[i] = vertices[vertexOffsetB + triangleB[i]];
     }
 
     // triangle intersect
-    if (triangleIntersection2(
+    if (triangles_intersect(
             triVerticesA[0], triVerticesA[1], triVerticesA[2], triVerticesB[0], triVerticesB[1], triVerticesB[2]))
     {
         unsigned int intTriPairOffset = atomicAdd(intTriPairCount, 1u);
